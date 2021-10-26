@@ -34,3 +34,27 @@ app.get("/cars", (req, res) => {
       res.status(500).send();
     });
 });
+
+app.get("/cars/:pk", (req, res) => {
+  let pk = req.params.pk;
+  //console.log(pk);
+  let myQuery = `SELECT *
+  FROM Car
+  LEFT JOIN CarType
+  ON CarType.CarTypePK = Car.CarTypeFK
+  WHERE CarPK = ${pk}`;
+
+  db.executeQuery(myQuery)
+    .then((result) => {
+      //console.log("result", result);
+      if (result[0]) {
+        res.send(result[0]);
+      } else {
+        res.status(404).send(`bad request`);
+      }
+    })
+    .catch((err) => {
+      console.log("Error in /cars/:pk", err);
+      res.status(500).send();
+    });
+});
